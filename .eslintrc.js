@@ -13,6 +13,8 @@ module.exports = {
     '@typescript-eslint/no-shadow': 'error',
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
+    // 禁用函数组件定义规则
+    'react/function-component-definition': 'off',
   },
   parserOptions: {
     ecmaVersion: 2022,

@@ -4,7 +4,6 @@
  */
 body {
   position: relative;
-  color: white;
   height: 100vh;
   background: linear-gradient(
     200.96deg,
@@ -16,7 +15,6 @@ body {
   overflow-y: hidden;
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
 button {
@@ -54,9 +52,11 @@ a:hover {
   text-decoration: none;
 }
 
-.Hello {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px 0;
+.app-wrap{
+  flex: 1;
+  overflow-y: scroll;
+}
+
+#root{
+  width: 100%;
 }
