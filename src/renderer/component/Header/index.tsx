@@ -1,6 +1,6 @@
 import React from 'react';
-import './styles.scss';
 import { HomeTwoTone } from '@ant-design/icons';
+import './styles.scss';
 
 const Index = () => {
   return (

@@ -14,6 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { exec } from 'child_process';
 
 class AppUpdater {
   constructor() {
@@ -24,6 +25,16 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+ipcMain.on('execute-script', (event) => {
+  exec('node ./node.js', (error, stdout, stderr) => {
+    if (error) {
+      console.error(`执行脚本时出错：${error}`);
+      return;
+    }
+    event.sender.send('script-executed', stdout);
+  });
+});
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -82,6 +93,16 @@ const createWindow = async () => {
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
+
+  mainWindow.webContents.openDevTools();
+
+  // 监听控制台日志输出
+  mainWindow.webContents.on(
+    'console-message',
+    (event, level, message, line, sourceId) => {
+      console.log(`[${level}] ${message} (line ${line})`);
+    },
+  );
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {

@@ -47,6 +47,10 @@ const configuration: webpack.Configuration = {
     modules: [webpackPaths.srcPath, 'node_modules'],
     // There is no need to add aliases here, the paths in tsconfig get mirrored
     plugins: [new TsconfigPathsPlugins()],
+    fallback: {
+      fs: false, // 禁用 fs 模块的处理
+      path: false,
+    },
   },
 
   plugins: [
