@@ -8,27 +8,36 @@ const Index = () => {
   const CheckboxGroup = Checkbox.Group;
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
-
   const handleClick = () => {
     const data = form.getFieldsValue();
     if (!localStorage.getItem('prototype_path')) {
+      messageApi.destroy();
       messageApi.open({
         type: 'error',
         content: '请配置prototype地址',
       });
     }
-    console.log(
-      data?.componentName,
-      data?.groupName,
-      JSON.stringify(data?.filesName),
-      localStorage.getItem('prototype_path'),
-    );
     window.electron.ipcRenderer.sendMessage('execute-script', [
       data?.componentName,
       data?.groupName,
       JSON.stringify(data?.filesName),
       localStorage.getItem('prototype_path'),
     ]);
+    window.electron.ipcRenderer.on('script-executed', (v) => {
+      // if (JSON.stringify(v).indexOf('ENOENT') > 0) {
+      messageApi.destroy();
+      messageApi.open({
+        type: 'error',
+        content: JSON.stringify(v),
+      });
+      // } else {
+      //   messageApi.destroy();
+      //   messageApi.open({
+      //     type: 'success',
+      //     content: 'ok',
+      //   });
+      // }
+    });
   };
 
   type FieldType = {

@@ -26,15 +26,28 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../../assets');
+
+const getAssetPath = (...paths: string[]): string => {
+  return path.join(RESOURCES_PATH, ...paths);
+};
+
 ipcMain.on('execute-script', (event, arg) => {
+  const scriptPath = getAssetPath('node.js');
   exec(
-    `node ./release/app/node.js ${arg[0]} ${arg[1]} ${arg[2]} ${arg[3]}`,
+    `node ${scriptPath} ${arg[0]} ${arg[1]} ${arg[2]} ${arg[3]}`,
+    { shell: '/bin/bash' },
     (error, stdout) => {
+      event.sender.send('script-executed', {
+        stdout,
+        error,
+        scriptPath,
+      });
       if (error) {
         console.error(`执行脚本时出错：${error}`);
-        return;
       }
-      event.sender.send('script-executed', stdout);
     },
   );
 });
@@ -74,14 +87,6 @@ const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
   }
-
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
-
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
 
   mainWindow = new BrowserWindow({
     show: false,

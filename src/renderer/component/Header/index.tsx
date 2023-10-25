@@ -46,6 +46,7 @@ const Index = () => {
             const value = inputRef?.current?.input?.value;
             if (value) {
               localStorage.setItem('prototype_path', value);
+              messageApi.destroy();
               messageApi.open({
                 type: 'success',
                 content: '保存成功',
