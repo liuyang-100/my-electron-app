@@ -12,9 +12,9 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { exec } from 'child_process';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { exec } from 'child_process';
 
 class AppUpdater {
   constructor() {
@@ -26,14 +26,17 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('execute-script', (event) => {
-  exec('node ./node.js', (error, stdout, stderr) => {
-    if (error) {
-      console.error(`执行脚本时出错：${error}`);
-      return;
-    }
-    event.sender.send('script-executed', stdout);
-  });
+ipcMain.on('execute-script', (event, arg) => {
+  exec(
+    `node ./release/app/node.js ${arg[0]} ${arg[1]} ${arg[2]} ${arg[3]}`,
+    (error, stdout) => {
+      if (error) {
+        console.error(`执行脚本时出错：${error}`);
+        return;
+      }
+      event.sender.send('script-executed', stdout);
+    },
+  );
 });
 
 ipcMain.on('ipc-example', async (event, arg) => {

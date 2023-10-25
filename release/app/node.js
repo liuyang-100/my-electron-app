@@ -2,31 +2,15 @@ const fs = require('fs');
 const { join } = require('path');
 
 // prototype工程路径
-const compontentPath = '/Users/liuyang/Documents/web/sa-fe-c-theme-prototype';
+const compontentPath = process.argv[5];
+// '/Users/liuyang/Documents/web/sa-fe-c-theme-prototype';
 // 添加的新组件名称
-const componentName = 'checked-00101';
+const componentName = process.argv[2];
 // 在分类中的位置
-const groupName = '图文';
+const groupName = process.argv[3];
 // ['announce.json','buyerPay.json','footer.json','globalSetting.json','header.json',] 部分不需要全局组件的落地页
 // 正常情况下所有的需要全局组件的落地页
-const allFilesName = [
-  'allItems.json',
-  'blogCollectionTemplate.json',
-  'blogTemplate.json',
-  'buyerActivateAccount.json',
-  'buyerLogin.json',
-  'buyerRegister.json',
-  'buyerResetPassword.json',
-  'cart.json',
-  'categoryTemplate.json',
-  'home.json',
-  'itemCollectionList.json',
-  'itemCollectionTemplate.json',
-  'itemTemplate.json',
-  'pageTemplate.json',
-  'searchItem.json',
-];
-const filesName = allFilesName;
+const filesName = process.argv[4];
 const folderPath = join(compontentPath, 'decorate/themes');
 
 const readFileFn = (path, setData) => {
@@ -68,16 +52,18 @@ fs.readdir(folderPath, (err, files) => {
       return data;
     });
 
-    readFileFn(groupsPath, (data) => {
-      data?.forEach((item) => {
-        if (item.label === groupName) {
-          if (!item.items?.includes(componentName)) {
-            item.items.push(componentName);
+    if (groupName) {
+      readFileFn(groupsPath, (data) => {
+        data?.forEach((item) => {
+          if (item.label === groupName) {
+            if (!item.items?.includes(componentName)) {
+              item.items.push(componentName);
+            }
           }
-        }
+        });
+        return data;
       });
-      return data;
-    });
+    }
 
     fs.readdir(pagePath, (err, files) => {
       if (err) {
