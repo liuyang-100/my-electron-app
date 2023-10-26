@@ -12,7 +12,7 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
@@ -43,7 +43,6 @@ ipcMain.on('execute-script', (event, arg) => {
       event.sender.send('script-executed', {
         stdout,
         error,
-        scriptPath,
       });
       if (error) {
         console.error(`执行脚本时出错：${error}`);

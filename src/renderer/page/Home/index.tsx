@@ -24,19 +24,19 @@ const Index = () => {
       localStorage.getItem('prototype_path'),
     ]);
     window.electron.ipcRenderer.on('script-executed', (v) => {
-      // if (JSON.stringify(v).indexOf('ENOENT') > 0) {
-      messageApi.destroy();
-      messageApi.open({
-        type: 'error',
-        content: JSON.stringify(v),
-      });
-      // } else {
-      //   messageApi.destroy();
-      //   messageApi.open({
-      //     type: 'success',
-      //     content: 'ok',
-      //   });
-      // }
+      if (JSON.stringify(v).indexOf('ENOENT') > 0) {
+        messageApi.destroy();
+        messageApi.open({
+          type: 'error',
+          content: JSON.stringify(v),
+        });
+      } else {
+        messageApi.destroy();
+        messageApi.open({
+          type: 'success',
+          content: 'ok',
+        });
+      }
     });
   };
 
